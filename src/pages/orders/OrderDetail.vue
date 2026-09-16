@@ -1,4 +1,3 @@
-
 <template>
 
     <div class="space-y-6">
@@ -10,10 +9,8 @@
 
                 <div class="flex items-center gap-3">
 
-                    <button
-                        @click="$router.back()"
-                        class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 cursor-pointer"
-                    >
+                    <button @click="$router.back()"
+                        class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 cursor-pointer">
                         ← Back
                     </button>
 
@@ -33,28 +30,19 @@
 
 
         <!-- Loading -->
-        <div
-            v-if="loading"
-            class="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-500"
-        >
+        <div v-if="loading" class="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-500">
             Loading order...
         </div>
 
 
         <!-- Error -->
-        <div
-            v-else-if="error"
-            class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600"
-        >
+        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600">
             {{ error }}
         </div>
 
 
         <!-- Order -->
-        <div
-            v-else-if="order"
-            class="space-y-6"
-        >
+        <div v-else-if="order" class="space-y-6">
 
             <!-- Order information -->
             <div class="bg-white rounded-xl border border-slate-200 p-6">
@@ -75,26 +63,23 @@
 
 
                     <!-- Status -->
-                    <span
-                        :class="statusClass(order.status)"
-                        class="px-3 py-1 rounded-full text-sm font-medium"
-                    >
+                    <span :class="statusClass(order.status)" class="px-3 py-1 rounded-full text-sm font-medium">
                         {{ order.status }}
                     </span>
 
                 </div>
 
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
 
                     <!-- Customer -->
                     <div>
 
-                        <p class="text-sm text-slate-500">
+                        <p class="font-medium text-slate-900 mt-1">
                             Customer
                         </p>
 
-                        <p class="font-medium text-slate-900 mt-1">
+                        <p class="text-sm text-slate-500">
                             {{ order.customer?.name || '-' }}
                         </p>
 
@@ -104,30 +89,62 @@
                     <!-- Seller -->
                     <div>
 
-                        <p class="text-sm text-slate-500">
-                            Seller
+                        <p class="font-medium text-slate-900 mt-1 ">
+                            Created
                         </p>
 
-                        <p class="font-medium text-slate-900 mt-1">
+                        <p class="text-sm text-slate-500">
                             {{ order.created_by?.name || '-' }}
+                        </p>
+                         <p class="text-sm text-slate-500">
+                            {{ order.created_at || '-' }}
                         </p>
 
                     </div>
 
 
                     <!-- Date -->
-                    <div>
+              
+
+                    <div v-if="order.confirmed_at">
+                        <p class="font-medium text-slate-900 mt-1 ">
+                            Confirmed
+                        </p>
 
                         <p class="text-sm text-slate-500">
-                            Created At
+                            {{ order.confirmed_by || '-' }}
                         </p>
-
-                        <p class="font-medium text-slate-900 mt-1">
-                            {{ order.created_at || '-' }}
+                        <p class="text-sm text-slate-500">
+                            {{ order.confirmed_at }}
                         </p>
+                       
 
+                         
                     </div>
 
+                    <div v-if="order.completed_at">
+                        <p class="font-medium text-slate-900 mt-1 ">
+                            Completed
+                        </p>
+                         <p class="text-sm text-slate-500">
+                            {{ order.completed_by }}
+                        </p>
+                        <p class="text-sm text-slate-500">
+                            {{ order.completed_at }}
+                        </p>
+                    </div>
+
+                    <div v-if="order.cancelled_at">
+                        <p class="font-medium text-slate-900 mt-1">
+                            Cancelled
+                        </p>
+                         <p class="text-sm text-slate-500">
+                            {{ order.cancelled_by }}
+                        </p>
+                        <p class="text-sm text-slate-500">
+                            {{ order.cancelled_at }}
+                        </p>
+                    </div>
                 </div>
 
             </div>
@@ -178,11 +195,7 @@
 
                     <tbody>
 
-                        <tr
-                            v-for="item in order.items"
-                            :key="item.id"
-                            class="border-b border-slate-100"
-                        >
+                        <tr v-for="item in order.items" :key="item.id" class="border-b border-slate-100">
 
                             <!-- Product -->
                             <td class="px-6 py-4">
@@ -231,10 +244,7 @@
                         <!-- Empty items -->
                         <tr v-if="!order.items || order.items.length === 0">
 
-                            <td
-                                colspan="5"
-                                class="px-6 py-10 text-center text-slate-500"
-                            >
+                            <td colspan="5" class="px-6 py-10 text-center text-slate-500">
                                 No items in this order
                             </td>
 
@@ -246,9 +256,7 @@
 
 
                 <!-- Total -->
-                <div
-                    class="flex justify-end px-6 py-5 border-t border-slate-200"
-                >
+                <div class="flex justify-end px-6 py-5 border-t border-slate-200">
 
                     <div class="text-right">
 
@@ -352,4 +360,3 @@ onMounted(() => {
 })
 
 </script>
-
