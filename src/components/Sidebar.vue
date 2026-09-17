@@ -33,12 +33,19 @@
         Products
       </router-link>
 
-          <router-link
+      <router-link
         to="/orders"
         class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-900 transition"
         active-class="bg-blue-600 text-white">
 
         Orders
+      </router-link>
+       <router-link
+        to="/inventories"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-900 transition"
+        active-class="bg-blue-600 text-white">
+
+        Inventories
       </router-link>
 
     </nav>

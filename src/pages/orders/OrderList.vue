@@ -61,7 +61,7 @@
                 <thead class="bg-slate-50 border-b border-slate-200">
 
                     <tr>
-                         <th class="text-left px-6 py-4 text-sm font-semibold text-slate-600">
+                        <th class="text-left px-6 py-4 text-sm font-semibold text-slate-600">
                             №
                         </th>
 
@@ -134,7 +134,7 @@
                         class="border-b border-slate-100 hover:bg-slate-50">
 
                         <!-- Order number -->
-                           <td class="px-6 py-4">
+                        <td class="px-6 py-4">
 
                             <span class="font-medium text-slate-900">
                                 {{ index + 1 }}
@@ -227,8 +227,14 @@
                                 <button v-if="
                                     order.status === 'confirmed' &&
                                     auth.hasPermission('cancel-order-confirmed')
-                                " @click="cancelConfirmedOrder(order.id)"
-                                    class="px-3 py-2 text-sm rounded-lg border border-red-300 text-red-600 hover:bg-red-50 cursor-pointer">
+                                " @click="cancelOrderId = order.id" class="px-3 py-2 text-sm rounded-lg
+                                    border border-red-300
+                                    text-red-600
+                                    hover:bg-red-50
+                                    hover:border-red-400
+                                    hover:text-red-700
+                                    transition-colors duration-200
+                                    cursor-pointer">
                                     Cancel
                                 </button>
 
@@ -313,6 +319,8 @@
     <CreateOrderModal v-if="showCreateModal" @close="showCreateModal = false" @created="getOrders" />
     <EditOrderModal v-if="editOrderId" :order-id="editOrderId" @close="editOrderId = null"
         @updated="handleOrderUpdated" />
+    <CancelOrderModal v-if="cancelOrderId" :order-id="cancelOrderId" @close="cancelOrderId = null"
+        @success="handleCancelSuccess" />
 </template>
 
 
@@ -324,7 +332,7 @@ import CreateOrderModal from './CreateOrderModal.vue'
 import EditOrderModal from '../../components/orders/EditOrderModal.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useRoute, useRouter } from 'vue-router'
-
+import CancelOrderModal from '../../components/orders/CancelOrderModal.vue'
 
 
 
@@ -338,6 +346,7 @@ const search = ref('')
 const status = ref('')
 const route = useRoute()
 const router = useRouter()
+const cancelOrderId = ref(null)
 const pagination = ref({
 
     current_page: 1,
@@ -388,7 +397,10 @@ const getOrders = async () => {
     }
 
 }
-
+const handleCancelSuccess = () => {
+    cancelOrderId.value = null
+    getOrders()
+}
 const handleSearch = () => {
 
     currentPage.value = 1

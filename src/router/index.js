@@ -9,6 +9,9 @@ import CategoryList from "../pages/categories/CategoryList.vue";
 import ProductDetail from "../components/products/ProductDetail.vue";
 import OrderList from "../pages/orders/OrderList.vue";
 import OrderDetail from "../pages/orders/OrderDetail.vue";
+import InventoryPage from "../pages/inventory/InventoryPage.vue";
+
+
 
 
 const routes = [
@@ -65,6 +68,14 @@ const routes = [
     {
         path: "/orders/:id",
         component: OrderDetail,
+        meta: {
+            requiresAuth: true
+        }
+    },
+
+    {
+        path: '/inventories',
+        component: InventoryPage,
         meta: {
             requiresAuth: true
         }

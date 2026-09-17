@@ -1,233 +1,596 @@
-
 <template>
-    <div
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-        @click.self="close"
+
+    <!-- ========================================================= -->
+    <!-- MODAL -->
+    <!-- ========================================================= -->
+
+    <Transition
+        appear
+        enter-active-class="transition-opacity duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
     >
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl">
 
-            <!-- Header -->
-            <div class="flex justify-between items-center p-6 border-b">
+        <div
+            class="fixed inset-0 z-50
+                   flex items-center justify-center
+                   p-4"
+            @click.self="close"
+        >
 
-                <div>
-                    <h2 class="text-2xl font-bold">
-                        Add Product
-                    </h2>
-
-                    <p class="text-slate-500 text-sm mt-1">
-                        Create a new product
-                    </p>
-                </div>
-
-                <button
-                    type="button"
-                    @click="close"
-                    :disabled="loading"
-                    class="text-2xl text-slate-400 hover:text-slate-700 cursor-pointer"
-                >
-                    ×
-                </button>
-
-            </div>
+            <!-- Backdrop -->
+            <div
+                class="absolute inset-0
+                       bg-slate-950/50
+                       backdrop-blur-sm"
+            ></div>
 
 
-            <!-- Form -->
-            <form
-                @submit.prevent="submit"
-                class="p-6 space-y-5"
+            <!-- ================================================= -->
+            <!-- MODAL CONTENT -->
+            <!-- ================================================= -->
+
+            <Transition
+                appear
+                enter-active-class="transition duration-200 ease-out"
+                enter-from-class="opacity-0 scale-95 translate-y-3"
+                enter-to-class="opacity-100 scale-100 translate-y-0"
+                leave-active-class="transition duration-150 ease-in"
+                leave-from-class="opacity-100 scale-100 translate-y-0"
+                leave-to-class="opacity-0 scale-95 translate-y-3"
             >
 
-                <!-- General Error -->
                 <div
-                    v-if="generalError"
-                    class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm"
+                    class="relative
+                           w-full
+                           max-w-lg
+                           max-h-[90vh]
+                           flex flex-col
+                           bg-white
+                           rounded-2xl
+                           shadow-2xl
+                           border border-slate-200
+                           overflow-hidden"
+                    @click.stop
                 >
-                    {{ generalError }}
-                </div>
 
+                    <!-- ========================================= -->
+                    <!-- HEADER -->
+                    <!-- ========================================= -->
 
-                <!-- Name -->
-                <div>
-
-                    <label class="block text-sm font-medium mb-1">
-                        Product Name
-                    </label>
-
-                    <input
-                        v-model="form.name"
-                        type="text"
-                        placeholder="Enter product name"
-                        class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :class="{
-                            'border-red-500': errors.name
-                        }"
+                    <div
+                        class="flex items-center justify-between
+                               px-6 py-5
+                               border-b border-slate-200"
                     >
 
-                    <p
-                        v-if="errors.name"
-                        class="text-red-500 text-sm mt-1"
-                    >
-                        {{ errors.name }}
-                    </p>
+                        <div class="flex items-center gap-3">
 
-                </div>
+                            <!-- Icon -->
+                            <div
+                                class="w-10 h-10
+                                       rounded-xl
+                                       bg-blue-50
+                                       text-blue-600
+                                       flex items-center
+                                       justify-center
+                                       flex-shrink-0"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 4v16m8-8H4"
+                                    />
+                                </svg>
+
+                            </div>
 
 
-                <!-- Category -->
-                <div>
+                            <!-- Title -->
+                            <div>
 
-                    <label class="block text-sm font-medium mb-1">
-                        Category
-                    </label>
+                                <h2
+                                    class="text-lg
+                                           font-semibold
+                                           text-slate-900"
+                                >
+                                    Add Product
+                                </h2>
 
-                    <select
-                        v-model="form.category_id"
-                        class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :class="{
-                            'border-red-500': errors.category_id
-                        }"
-                    >
+                                <p
+                                    class="text-sm
+                                           text-slate-500
+                                           mt-0.5"
+                                >
+                                    Create a new product
+                                </p>
 
-                        <option value="">
-                            Select category
-                        </option>
+                            </div>
 
-                        <option
-                            v-for="category in categories"
-                            :key="category.id"
-                            :value="category.id"
+                        </div>
+
+
+                        <!-- Close -->
+                        <button
+                            type="button"
+                            @click="close"
+                            :disabled="loading"
+                            class="w-9 h-9
+                                   flex items-center
+                                   justify-center
+                                   rounded-lg
+                                   text-slate-400
+                                   hover:bg-slate-100
+                                   hover:text-slate-700
+                                   transition-colors
+                                   cursor-pointer
+                                   disabled:opacity-40
+                                   disabled:cursor-not-allowed"
                         >
-                            {{ category.name }}
-                        </option>
 
-                    </select>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
 
-                    <p
-                        v-if="errors.category_id"
-                        class="text-red-500 text-sm mt-1"
+                        </button>
+
+                    </div>
+
+
+                    <!-- ========================================= -->
+                    <!-- FORM -->
+                    <!-- ========================================= -->
+
+                    <form
+                        @submit.prevent="submit"
+                        class="overflow-y-auto"
                     >
-                        {{ errors.category_id }}
-                    </p>
+
+                        <div class="px-6 py-5 space-y-5">
+
+
+                            <!-- General Error -->
+
+                            <div
+                                v-if="generalError"
+                                class="flex items-start gap-3
+                                       p-3.5
+                                       rounded-xl
+                                       bg-red-50
+                                       border border-red-200
+                                       text-red-700"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5
+                                           mt-0.5
+                                           flex-shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 9v3.75m0 3.75h.008M10.29 3.86l-7.82 13.5A1.5 1.5 0 003.77 19.5h16.46a1.5 1.5 0 001.3-2.14l-7.82-13.5a1.5 1.5 0 00-2.6 0z"
+                                    />
+                                </svg>
+
+                                <p class="text-sm">
+                                    {{ generalError }}
+                                </p>
+
+                            </div>
+
+
+                            <!-- ================================= -->
+                            <!-- NAME -->
+                            <!-- ================================= -->
+
+                            <div>
+
+                                <label
+                                    class="block
+                                           text-sm
+                                           font-medium
+                                           text-slate-700
+                                           mb-1.5"
+                                >
+                                    Product Name
+                                </label>
+
+                                <input
+                                    v-model="form.name"
+                                    type="text"
+                                    placeholder="Enter product name"
+                                    :class="[
+                                        'w-full px-4 py-2.5',
+                                        'border rounded-xl',
+                                        'text-sm text-slate-900',
+                                        'placeholder:text-slate-400',
+                                        'outline-none transition',
+                                        errors.name
+                                            ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                                            : 'border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                                    ]"
+                                >
+
+                                <p
+                                    v-if="errors.name"
+                                    class="mt-1.5
+                                           text-xs
+                                           text-red-600"
+                                >
+                                    {{ errors.name }}
+                                </p>
+
+                            </div>
+
+
+                            <!-- ================================= -->
+                            <!-- CATEGORY -->
+                            <!-- ================================= -->
+
+                            <div>
+
+                                <label
+                                    class="block
+                                           text-sm
+                                           font-medium
+                                           text-slate-700
+                                           mb-1.5"
+                                >
+                                    Category
+                                </label>
+
+                                <select
+                                    v-model="form.category_id"
+                                    :class="[
+                                        'w-full px-4 py-2.5',
+                                        'border rounded-xl',
+                                        'text-sm',
+                                        'bg-white',
+                                        'outline-none transition',
+                                        'cursor-pointer',
+                                        errors.category_id
+                                            ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                                            : 'border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                                    ]"
+                                >
+
+                                    <option value="">
+                                        Select category
+                                    </option>
+
+                                    <option
+                                        v-for="category in categories"
+                                        :key="category.id"
+                                        :value="category.id"
+                                    >
+                                        {{ category.name }}
+                                    </option>
+
+                                </select>
+
+                                <p
+                                    v-if="errors.category_id"
+                                    class="mt-1.5
+                                           text-xs
+                                           text-red-600"
+                                >
+                                    {{ errors.category_id }}
+                                </p>
+
+                            </div>
+
+
+                            <!-- ================================= -->
+                            <!-- PRICE + QUANTITY -->
+                            <!-- ================================= -->
+
+                            <div
+                                class="grid grid-cols-1
+                                       sm:grid-cols-2
+                                       gap-4"
+                            >
+
+                                <!-- Price -->
+                                <div>
+
+                                    <label
+                                        class="block
+                                               text-sm
+                                               font-medium
+                                               text-slate-700
+                                               mb-1.5"
+                                    >
+                                        Price
+                                    </label>
+
+                                    <div class="relative">
+
+                                        <span
+                                            class="absolute
+                                                   left-3.5
+                                                   top-1/2
+                                                   -translate-y-1/2
+                                                   text-sm
+                                                   text-slate-400"
+                                        >
+                                            $
+                                        </span>
+
+                                        <input
+                                            v-model="form.price"
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            placeholder="0.00"
+                                            :class="[
+                                                'w-full pl-8 pr-4 py-2.5',
+                                                'border rounded-xl',
+                                                'text-sm text-slate-900',
+                                                'outline-none transition',
+                                                errors.price
+                                                    ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                                                    : 'border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                                            ]"
+                                        />
+
+                                    </div>
+
+                                    <p
+                                        v-if="errors.price"
+                                        class="mt-1.5
+                                               text-xs
+                                               text-red-600"
+                                    >
+                                        {{ errors.price }}
+                                    </p>
+
+                                </div>
+
+
+                                <!-- Quantity -->
+                                <div>
+
+                                    <label
+                                        class="block
+                                               text-sm
+                                               font-medium
+                                               text-slate-700
+                                               mb-1.5"
+                                    >
+                                        Quantity
+                                    </label>
+
+                                    <input
+                                        v-model="form.quantity"
+                                        type="number"
+                                        min="0"
+                                        placeholder="0"
+                                        :class="[
+                                            'w-full px-4 py-2.5',
+                                            'border rounded-xl',
+                                            'text-sm text-slate-900',
+                                            'outline-none transition',
+                                            errors.quantity
+                                                ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                                                : 'border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                                        ]"
+                                    />
+
+                                    <p
+                                        v-if="errors.quantity"
+                                        class="mt-1.5
+                                               text-xs
+                                               text-red-600"
+                                    >
+                                        {{ errors.quantity }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ================================= -->
+                            <!-- DESCRIPTION -->
+                            <!-- ================================= -->
+
+                            <div>
+
+                                <div
+                                    class="flex items-center
+                                           justify-between
+                                           mb-1.5"
+                                >
+
+                                    <label
+                                        class="block
+                                               text-sm
+                                               font-medium
+                                               text-slate-700"
+                                    >
+                                        Description
+                                    </label>
+
+                                    <span
+                                        class="text-xs
+                                               text-slate-400"
+                                    >
+                                        Optional
+                                    </span>
+
+                                </div>
+
+                                <textarea
+                                    v-model="form.description"
+                                    rows="4"
+                                    placeholder="Describe the product..."
+                                    :class="[
+                                        'w-full px-4 py-3',
+                                        'border rounded-xl',
+                                        'text-sm text-slate-900',
+                                        'placeholder:text-slate-400',
+                                        'resize-none',
+                                        'outline-none transition',
+                                        errors.description
+                                            ? 'border-red-400 focus:ring-2 focus:ring-red-100'
+                                            : 'border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                                    ]"
+                                ></textarea>
+
+                                <p
+                                    v-if="errors.description"
+                                    class="mt-1.5
+                                           text-xs
+                                           text-red-600"
+                                >
+                                    {{ errors.description }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ========================================= -->
+                        <!-- FOOTER -->
+                        <!-- ========================================= -->
+
+                        <div
+                            class="flex justify-end
+                                   gap-3
+                                   px-6 py-4
+                                   border-t border-slate-200
+                                   bg-slate-50/50"
+                        >
+
+                            <!-- Cancel -->
+                            <button
+                                type="button"
+                                @click="close"
+                                :disabled="loading"
+                                class="px-4 py-2.5
+                                       rounded-xl
+                                       border border-slate-300
+                                       bg-white
+                                       text-slate-700
+                                       text-sm
+                                       font-medium
+                                       hover:bg-slate-50
+                                       transition-colors
+                                       cursor-pointer
+                                       disabled:opacity-50
+                                       disabled:cursor-not-allowed"
+                            >
+                                Cancel
+                            </button>
+
+
+                            <!-- Create -->
+                            <button
+                                type="submit"
+                                :disabled="loading"
+                                class="inline-flex
+                                       items-center
+                                       justify-center
+                                       gap-2
+                                       min-w-[140px]
+                                       px-4 py-2.5
+                                       rounded-xl
+                                       bg-slate-900
+                                       text-white
+                                       text-sm
+                                       font-medium
+                                       hover:bg-slate-800
+                                       transition-colors
+                                       cursor-pointer
+                                       disabled:opacity-50
+                                       disabled:cursor-not-allowed"
+                            >
+
+                                <!-- Spinner -->
+                                <svg
+                                    v-if="loading"
+                                    class="w-4 h-4 animate-spin"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        class="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        stroke-width="4"
+                                    />
+
+                                    <path
+                                        class="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    />
+                                </svg>
+
+                                {{ loading
+                                    ? 'Creating...'
+                                    : 'Create Product'
+                                }}
+
+                            </button>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
-
-                <!-- Price -->
-                <div>
-
-                    <label class="block text-sm font-medium mb-1">
-                        Price
-                    </label>
-
-                    <input
-                        v-model="form.price"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0.00"
-                        class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :class="{
-                            'border-red-500': errors.price
-                        }"
-                    >
-
-                    <p
-                        v-if="errors.price"
-                        class="text-red-500 text-sm mt-1"
-                    >
-                        {{ errors.price }}
-                    </p>
-
-                </div>
-
-
-                <!-- Quantity -->
-                <div>
-
-                    <label class="block text-sm font-medium mb-1">
-                        Quantity
-                    </label>
-
-                    <input
-                        v-model="form.quantity"
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                        class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :class="{
-                            'border-red-500': errors.quantity
-                        }"
-                    >
-
-                    <p
-                        v-if="errors.quantity"
-                        class="text-red-500 text-sm mt-1"
-                    >
-                        {{ errors.quantity }}
-                    </p>
-
-                </div>
-
-
-                <!-- Description -->
-                <div>
-
-                    <label class="block text-sm font-medium mb-1">
-                        Description
-                    </label>
-
-                    <textarea
-                        v-model="form.description"
-                        rows="4"
-                        placeholder="Product description..."
-                        class="w-full p-3 border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :class="{
-                            'border-red-500': errors.description
-                        }"
-                    ></textarea>
-
-                    <p
-                        v-if="errors.description"
-                        class="text-red-500 text-sm mt-1"
-                    >
-                        {{ errors.description }}
-                    </p>
-
-                </div>
-
-
-                <!-- Buttons -->
-                <div class="flex justify-end gap-3 pt-2">
-
-                    <button
-                        type="button"
-                        @click="close"
-                        :disabled="loading"
-                        class="px-5 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer disabled:opacity-50"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        :disabled="loading"
-                        class="px-5 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 cursor-pointer disabled:opacity-50"
-                    >
-                        {{ loading ? 'Creating...' : 'Create Product' }}
-                    </button>
-
-                </div>
-
-            </form>
+            </Transition>
 
         </div>
-    </div>
+
+    </Transition>
+
 </template>
 
 
 <script setup>
 
-import { onMounted, reactive, ref } from 'vue'
+import {
+    onMounted,
+    onUnmounted,
+    reactive,
+    ref
+} from 'vue'
+
 import api from '../../services/api'
 
 
@@ -257,20 +620,32 @@ const generalError = ref('')
 
 
 const form = reactive({
+
     name: '',
+
     category_id: '',
+
     price: '',
+
     description: '',
+
     quantity: ''
+
 })
 
 
 const errors = reactive({
+
     name: '',
+
     category_id: '',
+
     price: '',
+
     description: '',
+
     quantity: ''
+
 })
 
 
@@ -284,11 +659,15 @@ const getCategories = async () => {
 
     try {
 
-        const response = await api.get('/category')
+        const response =
+            await api.get('/category')
 
-        categories.value = response.data.data
+        categories.value =
+            response.data.data
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error)
 
@@ -309,9 +688,13 @@ const getCategories = async () => {
 const clearErrors = () => {
 
     errors.name = ''
+
     errors.category_id = ''
+
     errors.price = ''
+
     errors.description = ''
+
     errors.quantity = ''
 
     generalError.value = ''
@@ -333,57 +716,69 @@ const submit = async () => {
 
         loading.value = true
 
+
         await api.post('/product', {
 
             name: form.name,
 
-            category_id: Number(form.category_id),
+            category_id:
+                Number(form.category_id),
 
-            price: Number(form.price),
+            price:
+                Number(form.price),
 
-            description: form.description || null,
+            description:
+                form.description || null,
 
-            quantity: form.quantity === ''
-                ? null
-                : Number(form.quantity)
+            quantity:
+                form.quantity === ''
+                    ? null
+                    : Number(form.quantity)
 
         })
+
 
         emit('created')
 
         emit('close')
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error)
 
-        /*
-        |--------------------------------------------------------------------------
-        | Validation Error
-        |--------------------------------------------------------------------------
-        */
 
-        if (error.response?.status === 422) {
+        if (
+            error.response?.status === 422
+        ) {
 
             const validationErrors =
                 error.response.data.errors || {}
 
+
             errors.name =
                 validationErrors.name?.[0] || ''
+
 
             errors.category_id =
                 validationErrors.category_id?.[0] || ''
 
+
             errors.price =
                 validationErrors.price?.[0] || ''
+
 
             errors.description =
                 validationErrors.description?.[0] || ''
 
+
             errors.quantity =
                 validationErrors.quantity?.[0] || ''
 
-        } else {
+        }
+
+        else {
 
             generalError.value =
                 error.response?.data?.message ||
@@ -391,7 +786,9 @@ const submit = async () => {
 
         }
 
-    } finally {
+    }
+
+    finally {
 
         loading.value = false
 
@@ -409,7 +806,9 @@ const submit = async () => {
 const close = () => {
 
     if (loading.value) {
+
         return
+
     }
 
     emit('close')
@@ -419,7 +818,24 @@ const close = () => {
 
 /*
 |--------------------------------------------------------------------------
-| Load Categories
+| Escape
+|--------------------------------------------------------------------------
+*/
+
+const handleEscape = (event) => {
+
+    if (event.key === 'Escape') {
+
+        close()
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Lifecycle
 |--------------------------------------------------------------------------
 */
 
@@ -427,7 +843,21 @@ onMounted(() => {
 
     getCategories()
 
+    window.addEventListener(
+        'keydown',
+        handleEscape
+    )
+
+})
+
+
+onUnmounted(() => {
+
+    window.removeEventListener(
+        'keydown',
+        handleEscape
+    )
+
 })
 
 </script>
-
